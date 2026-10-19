@@ -1,0 +1,1 @@
+-- Availability rows are intentionally created during the availability milestone.

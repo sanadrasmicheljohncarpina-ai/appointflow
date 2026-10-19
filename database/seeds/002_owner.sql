@@ -1,0 +1,1 @@
+-- Created by scripts/install.php or setup/index.php because the password hash is generated at runtime.

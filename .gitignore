@@ -1,0 +1,7 @@
+/storage/install.lock
+/storage/logs/*
+!.gitkeep
+
+/config/mail.php
+/storage/mail/*
+!/storage/mail/.gitkeep

@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS appointments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    engagement_id BIGINT UNSIGNED NOT NULL,
+    assigned_user_id BIGINT UNSIGNED NOT NULL,
+    starts_at DATETIME NOT NULL,
+    ends_at DATETIME NOT NULL,
+    status ENUM('scheduled','cancelled','completed','no_show') NOT NULL DEFAULT 'scheduled',
+    client_token_hash VARCHAR(255) NOT NULL,
+    client_token_expires_at DATETIME NULL,
+    confirmation_sent_at DATETIME NULL,
+    reminder_sent_at DATETIME NULL,
+    cancelled_at DATETIME NULL,
+    cancellation_reason TEXT NULL,
+    completed_at DATETIME NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_appointments_engagement FOREIGN KEY (engagement_id) REFERENCES engagements(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_appointments_assigned_user FOREIGN KEY (assigned_user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    KEY idx_appointments_user_start (assigned_user_id, starts_at),
+    KEY idx_appointments_engagement (engagement_id, status),
+    KEY idx_appointments_schedule (starts_at, ends_at, status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

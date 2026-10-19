@@ -1,0 +1,29 @@
+# AppointFlow friendly URLs (Apache + mod_rewrite, AllowOverride must permit FileInfo/All).
+# The original long URLs keep working, so already-shared links do not break.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Never serve internal folders or notes over the web (code, config, emails with private links, credentials).
+RewriteRule ^(app|config|database|storage|scripts|cron|tests)(/|$)  - [F,L]
+RewriteRule ^(authentication|[A-Za-z0-9_.-]+\.(md|txt))$           - [F,L]
+
+# Public booking:  /book/<business>
+RewriteRule ^book/([A-Za-z0-9_-]+)/?$                       public_booking/index.php?business=$1 [L,QSA]
+# Inquiry form:    /book/<business>/request  or  /book/<business>/request/<service-id>
+RewriteRule ^book/([A-Za-z0-9_-]+)/request/?$               public_booking/inquiry.php?business=$1 [L,QSA]
+RewriteRule ^book/([A-Za-z0-9_-]+)/request/([0-9]+)/?$      public_booking/inquiry.php?business=$1&service=$2 [L,QSA]
+# Find my appointments (emails the client a fresh private link):  /book/<business>/my-appointments
+RewriteRule ^book/([A-Za-z0-9_-]+)/my-appointments/?$       public_booking/find.php?business=$1 [L,QSA]
+# Confirmation:    /book/<business>/received/<engagement-id>
+RewriteRule ^book/([A-Za-z0-9_-]+)/received/([0-9]+)/?$     public_booking/confirmation.php?business=$1&engagement=$2 [L,QSA]
+
+# Client appointment management link:  /appointment/<token>
+RewriteRule ^appointment/([A-Za-z0-9_-]+)/?$                public_booking/appointment.php?token=$1 [L,QSA]
+
+# Home page:       /
+RewriteRule ^$                                              public/index.php [L]
+
+# Team sign-in and staff pages:  /login  /dashboard  /engagements  /clients  /team ...
+RewriteRule ^login/?$                                       public/login.php [L,QSA]
+RewriteRule ^(logout|dashboard|calendar|followups|engagements|clients|team|services|availability|settings)/?$ public/$1.php [L,QSA]
+</IfModule>

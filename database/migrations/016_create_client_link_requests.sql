@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS client_link_requests (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    workspace_id BIGINT UNSIGNED NOT NULL,
+    engagement_id BIGINT UNSIGNED NOT NULL,
+    appointment_id BIGINT UNSIGNED NOT NULL,
+    client_id BIGINT UNSIGNED NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    status ENUM('pending','sent','dismissed') NOT NULL DEFAULT 'pending',
+    request_count INT UNSIGNED NOT NULL DEFAULT 1,
+    requested_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_requested_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    resolved_at DATETIME NULL,
+    resolved_by_user_id BIGINT UNSIGNED NULL,
+    CONSTRAINT fk_link_requests_workspace FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_link_requests_engagement FOREIGN KEY (engagement_id) REFERENCES engagements(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_link_requests_appointment FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_link_requests_client FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_link_requests_resolver FOREIGN KEY (resolved_by_user_id) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    KEY idx_link_requests_engagement (engagement_id, status),
+    KEY idx_link_requests_workspace (workspace_id, status, last_requested_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
